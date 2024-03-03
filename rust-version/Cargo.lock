@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "hw0-rust"
+name = "rust-kernel"
 version = "0.1.0"

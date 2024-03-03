@@ -13,7 +13,7 @@ QEMU_BINARY       = qemu-system-aarch64
 QEMU_MACHINE_TYPE = raspi3
 QEMU_RELEASE_ARGS = -d in_asm -display none
 RUSTC_MISC_ARGS   = -C target-cpu=cortex-a53
-LD_SCRIPT_PATH    = src/
+LD_SCRIPT_PATH    = src/bsp/raspberrypi/
 LD_SCRIPT_NAME    = linker.ld
 KERNEL_LINKER_SCRIPT = $(LD_SCRIPT_PATH)$(LD_SCRIPT_NAME)
 RUSTFLAGS = $(RUSTC_MISC_ARGS)                   \
@@ -25,13 +25,16 @@ KERNEL_ELF = target/$(TARGET)/release/kernel
 
 COMPILER_ARGS = --target=$(TARGET) --release
 
-$(KERNEL_ELF): # src/main.rs src/boot.s Cargo.toml
+$(KERNEL_ELF): 
 	@RUSTFLAGS="$(RUSTFLAGS)" cargo rustc $(COMPILER_ARGS)
 
 $(KERNEL_BIN): $(KERNEL_ELF)
 	rust-objcopy -O binary $(KERNEL_ELF) $(KERNEL_BIN)
 
 all: $(KERNEL_BIN)
+
+qemu: $(KERNEL_BIN)
+	qemu-system-aarch64 -M raspi3b -kernel $(KERNEL_BIN) -d in_asm -display none 
 
 clean:
 	rm -rf target $(KERNEL_BIN)
