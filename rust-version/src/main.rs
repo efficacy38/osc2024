@@ -10,3 +10,7 @@ mod cpu;
 fn panic(_info: &PanicInfo) -> ! {
     unimplemented!()
 }
+
+unsafe fn kernel_init() -> ! {
+    panic!()
+}

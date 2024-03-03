@@ -11,3 +11,4 @@ path = "src/main.rs"
 
 
 [dependencies]
+aarch64-cpu = "9.4.0"

@@ -19,11 +19,13 @@ KERNEL_LINKER_SCRIPT = $(LD_SCRIPT_PATH)$(LD_SCRIPT_NAME)
 RUSTFLAGS = $(RUSTC_MISC_ARGS)                   \
     -C link-arg=--library-path=$(LD_SCRIPT_PATH) \
     -C link-arg=--script=$(KERNEL_LINKER_SCRIPT)
-
-# build my kernel
+# building args
 KERNEL_ELF = target/$(TARGET)/release/kernel
-
 COMPILER_ARGS = --target=$(TARGET) --release
+
+.PHONY: all clean qemu
+
+all: $(KERNEL_BIN)
 
 $(KERNEL_ELF): 
 	@RUSTFLAGS="$(RUSTFLAGS)" cargo rustc $(COMPILER_ARGS)
@@ -31,10 +33,15 @@ $(KERNEL_ELF):
 $(KERNEL_BIN): $(KERNEL_ELF)
 	rust-objcopy -O binary $(KERNEL_ELF) $(KERNEL_BIN)
 
-all: $(KERNEL_BIN)
 
 qemu: $(KERNEL_BIN)
 	qemu-system-aarch64 -M raspi3b -kernel $(KERNEL_BIN) -d in_asm -display none 
+
+readelf:
+	readelf --header $(KERNEL_ELF)
+
+objdump:
+	aarch64-linux-gnu-objdump --disassemble --demanage --section .text --section .rodata $(KERNEL_ELF) | rustfilt
 
 clean:
 	rm -rf target $(KERNEL_BIN)

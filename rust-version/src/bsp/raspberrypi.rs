@@ -5,3 +5,7 @@
 //! Top-level BSP file for the Raspberry Pi 3 and 4.
 
 // Coming soon.
+
+#[path = "../_arch/aarch64/cpu/boot.rs"]
+mod arch_boot;
+
